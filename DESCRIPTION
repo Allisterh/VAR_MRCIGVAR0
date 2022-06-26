@@ -1,0 +1,35 @@
+Package: MRCIGVAR0
+Title: Multi regime VAR and GVAR modelling
+Version: 0.0.0.9001
+Authors@R: c(
+    person(given = "PU",
+           family = "cHEN",
+           role = c("aut", "cre"),
+           email = "chenpu08@googlemail.com"),
+    person(given = "pu",
+           family = "Chen",
+           role = c("ctb"),
+           email = "chenpu08@googlemail.com")
+    )
+Description: Data generating, estimation and impulse response functions of VAR,CIVAR, GVAR, CIGVAR, MRVAR, MRCIVAR, MRGVAR, and MRCIGVAR models.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.1.1
+Depends: 
+    R (>= 2.10)
+Imports:
+    tseries,
+    vars,
+    Matrix,
+    ggplot2,
+    gridExtra,
+    stats
+Suggests:
+    knitr,
+    devtools,
+    roxygen2,
+    testthat,
+    rmarkdown
+LazyData: true
+VignetteBuilder: knitr

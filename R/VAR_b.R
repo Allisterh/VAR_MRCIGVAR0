@@ -362,42 +362,42 @@ VARest <- function (res)
 #'
 #' @return an (n, n, nstep, 3) array containing the impulse response functions
 #' @export
-irf_VAR_CB <- function (res, nstep, comb, irf = c("gen", "chol", "chol1", "gen1", "comb1"), runs = 200, conf = c(0.05, 0.95))
+irf_VAR_CB <- function (res, nstep, comb, irf = c("gen", "chol", "chol1", "gen1", "comb1","irfX"), runs = 200, conf = c(0.05, 0.95), Xshks=NA)
 {
   n = res$n
   p = res$p
   T = dim(res$Y)[1]
   A = res$A
   B = res$B
-  Co = res$Co;
-  type  = res$type
-  X     = res$X
-  crk   = res$crk
-  neq   = dim(B)[1]
-  nvar  = dim(B)[2]
+  Co = res$Co
+  type = res$type
+  X = res$X
+  crk = res$crk
+  neq = dim(B)[1]
+  nvar = dim(B)[2]
   sigma = res$Sigma
   response <- array(0, dim = c(neq, nvar, nstep, length(conf) + 1))
-  response[, , , 1] <- irf_B_sigma(B=B,sigma=sigma,nstep,comb,irf)
+  if (irf=="irfX") { Xshk=t(Co[,1+Xshks])}
+  response[, , , 1] <- irf_B_sigma(B = B, sigma = sigma, nstep, comb, irf, G, A0, B0, smat, Xshk)
   responseR <- array(0, dim = c(neq, nvar, nstep, runs))
   for (i in 1:runs) {
-    Uo_run    = rnormSIGMA(T, sigma)
-    res_run   = VARData(n, p, T, r_np = NA, A=NA, B, Co, U = Uo_run, Sigma = NA, type,X,mu=NA,Yo=NA)
-    res_e     = VARest(res=res_run)
-    B_run     = res_e$B
+    Uo_run = rnormSIGMA(T, sigma)
+    res_run = VARData(n, p, T, r_np = NA, A = NA, B, Co, U = Uo_run, Sigma = NA, type, X, mu = NA, Yo = NA)
+    res_e = VARest(res = res_run)
+    B_run = res_e$B
+    Co_run = res_e$Co
     sigma_run = res_e$Sigma
-    responseR[, , , i] <- irf_B_sigma(B=res_e$B, sigma=res_e$Sigma, nstep, comb, irf)
+    if (irf=="irfX") { Xshk=t(Co_run[,1+Xshks])}
+    responseR[, , , i] <- irf_B_sigma(B = res_e$B, sigma = res_e$Sigma, nstep, comb, irf, G, A0, B0, smat, Xshk)
   }
   for (tt in 1:(nstep)) {
     for (i in 1:neq) {
       for (j in 1:nvar) {
-
-        response[i, j, tt, -1] = stats::quantile(responseR[i,j, tt, ], conf)
+        response[i, j, tt, -1] = stats::quantile(responseR[i, j, tt, ], conf)
       }
     }
   }
   return(response)
 }
-
-
 
 
